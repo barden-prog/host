@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi SPMB 2026 - TAHUN PELJARAN 2026/2027</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==================== STYLING UNTUK TAMPILAN LAYAR (WEB) ==================== */
+        @media screen {
+            body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+            .container { max-width: 900px; margin-top: 30px; margin-bottom: 50px; }
+            .dashboard-card { background: rgb(85, 105, 196); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; }
+            
+            .header-section { 
+                background: linear-gradient(135deg, #1a2a6c, #f19494, #65dc90); 
+                color: white; 
+                padding: 30px; 
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 20px;
+            }
+            .header-text { text-align: left; }
+            
+            @media (max-width: 768px) {
+                .header-section { flex-direction: column; text-align: center; justify-content: center; }
+                .header-text { text-align: center; }
+            }
+
+            .section-container { padding: 20px; border-radius: 15px; margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05); }
+            .sec-anak { background-color: #e3f2fd; border-left: 8px solid #0d6efd; }
+            .sec-ortu { background-color: #fce4ec; border-left: 8px solid #d81b60; }
+            .sec-periodik { background-color: #fffde7; border-left: 8px solid #fbc02d; }
+            .sec-titimangsa { background-color: #f3e5f5; border-left: 8px solid #9c27b0; }
+            
+            .section-title { font-weight: bold; margin-bottom: 15px; color: #333; text-transform: uppercase; display: flex; align-items: center; }
+            .section-title i { margin-right: 10px; font-size: 1.2rem; }
+            
+            label { font-size: 0.85rem; font-weight: 600; color: #555; display: block; margin-bottom: 5px; }
+            label i { margin-right: 5px; color: #1a2a6c; width: 15px; text-align: center; }
+
+            .form-control, .form-select { 
+                border-radius: 8px; 
+                margin-bottom: 12px; 
+                min-width: 145px; 
+            }
+
+            .btn-simpan { background: linear-gradient(to right, #11998e, #38ef7d); color:white; padding: 15px; font-weight: bold; width: 100%; border-radius: 10px; border: none; font-size: 1.2rem; cursor: pointer; transition: 0.3s; margin-bottom: 20px;}
+            .btn-simpan:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+            .locked-form { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+            .app-footer { text-align: center; margin-top: 20px; padding: 20px; color: #666; font-size: 0.9rem; }
+            
+            /* Sembunyikan template cetak & watermark dari layar Web */
+            #print-area, .watermark-logo { display: none; }
+        }
+
+        /* ==================== STYLING PRESISI UNTUK CETAK (PRINT F4) ==================== */
+        @page {
+            size: 215mm 330mm; /* Kertas F4 / Folio Standar */
+            margin: 12mm 15mm 10mm 15mm; 
+        }
+
+        @media print { 
+            body { background: white; font-family: Arial, Helvetica, sans-serif; color: #000; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* Sembunyikan UI Web */
+            #main-content, .no-print, nav, footer, .dashboard-card { display: none !important; } 
+            
+            /* Tampilkan Area Cetak */
+            #print-area { display: block !important; width: 100%; background: #fff; }
+
+            /* Pembungkus Halaman untuk kendali Konten & Watermark */
+            .page-container {
+                position: relative;
+                width: 100%;
+                overflow: hidden;
+                box-sizing: border-box;
+            }
+            .page-break {
+                page-break-before: always;
+                clear: both;
+            }
+
+            /* WATERMARK LOGO TUT WURI HANDAYANI ABSOLUT URL DENGAN OPACITY OPTIMAL */
+            .watermark-logo {
+                display: block !important;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 420px;
+                opacity: 0.12 !important; 
+                z-index: -1;
+                pointer-events: none;
+            }
+
+            /* DESAIN HEADER DAPODIK */
+            .header-dapodik-wrapper { text-align: center; margin-bottom: 8px; }
+            .logo-dapodik-container { 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                margin-left: -50px; 
+            }
+            .ruang-logo {
+                width: 90px; 
+                height: 90px;
+                margin-right: 15px;
+            }
+            .title-wrapper { text-align: left; }
+            .dapodik-blue { font-size: 40pt; font-weight: 900; color: #1a237e; letter-spacing: -2px; margin: 0; line-height: 1; text-transform: lowercase; }
+            .dapodik-orange { font-size: 16pt; font-weight: 900; color: #e65100; letter-spacing: 1px; margin: 0; margin-top: 2px; text-transform: capitalize; padding-left: 2px;}
+            
+            .ribbon-sekolah {
+                background-color: #ffd54f;
+                color: #1a237e;
+                font-size: 16pt;
+                font-weight: 900;
+                display: inline-block;
+                padding: 4px 40px;
+                border: 2px solid #fbc02d;
+                border-radius: 8px;
+                box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+                margin-bottom: 8px;
+                margin-top: 8px;
+                letter-spacing: 2px;
+            }
+            .title-hitam {
+                background-color: #000;
+                color: #ffeb3b;
+                display: inline-block;
+                font-weight: bold;
+                font-size: 11pt;
+                padding: 4px 20px;
+                border-radius: 12px;
+                margin-bottom: 4px;
+                letter-spacing: 1px;
+            }
+            .print-tahun-pelajaran {
+                font-size: 11pt;
+                font-weight: bold;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .row-tgl-nis { display: flex; justify-content: space-between; font-size: 10pt; align-items: flex-end; margin-bottom: 2px; }
+            .nis-box { color: #1a237e; font-weight: bold; font-size: 11pt; display: inline-block; }
+            .sub-nis { font-size: 8pt; font-style: italic; color: #1a237e; display: block; margin-top: -1px; }
+
+            /* HEADER SEKSI (WARNA UNGU/HIJAU) */
+            .section-print-purple {
+                background-color: #8e24aa !important;
+                color: white !important;
+                font-weight: bold;
+                font-size: 10.5pt;
+                padding: 3px 12px;
+                border-radius: 15px;
+                margin-top: 8px;
+                margin-bottom: 3px;
+            }
+            .section-print-green {
+                background-color: #ccff90 !important;
+                color: #000 !important;
+                font-weight: bold;
+                font-size: 10.5pt;
+                padding: 4px 12px;
+                border-radius: 15px;
+                border: 1px solid #7cb342;
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+            .section-print-blue {
+                color: #000080;
+                font-size: 11pt;
+                font-weight: 900;
+                text-decoration: underline;
+                margin-top: 15px;
+                margin-bottom: 8px;
+                font-family: 'Times New Roman', Times, serif;
+                background: white;
+            }
+
+            /* TABEL ISIAN PROPORSIONAL */
+            .table-print { width: 100%; border-collapse: collapse; font-size: 9.5pt; font-family: Arial, sans-serif; line-height: 1.45; } 
+            .table-print td { padding: 3.5px 2px; vertical-align: bottom; border: none; } 
+            .t-lbl { width: 33%; font-weight: normal; vertical-align: middle;}
+            .t-cln { width: 2%; text-align: center; vertical-align: middle;}
+            .t-val { width: 65%; font-weight: bold; color: #000; border-bottom: 1px dotted #666; position: relative; }
+            
+            .text-red, .text-italic, .hint-text { display: none !important; }
+            
+            /* TANDA TANGAN (RATA TENGAH) */
+            .signature-wrapper { display: flex; justify-content: flex-end; margin-top: 25px; page-break-inside: avoid; }
+            .signature-box { text-align: center; width: 250px; font-size: 10pt; }
+            .garis-bawah-tebal { border-bottom: 2px solid black; display: inline-block; width: 100%; }
+
+            /* KOTAK CATATAN */
+            .catatan-box-title { background-color: red !important; color: white !important; font-weight: bold; padding: 2px 10px; display: inline-block; font-size: 9pt; margin-top: 15px; }
+            .catatan-list { font-size: 9pt; padding-left: 20px; margin-top: 5px; margin-bottom: 15px; line-height: 1.4;}
+            
+            .terima-kasih-img { text-align: center; margin-top: 10px; font-family: "Comic Sans MS", cursive, sans-serif; font-size: 32pt; font-weight: bold; color: #ff9800; text-shadow: 2px 2px 0px #000, -1px -1px 0 #d32f2f, 1px -1px 0 #d32f2f, -1px 1px 0 #d32f2f, 1px 1px 0 #d32f2f; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-content">
+    <div class="dashboard-card shadow">
+        
+        <div class="header-section">
+            <div style="background: white; padding:10px; border-radius:10px;">
+                <i class="fa-solid fa-graduation-cap fa-4x" style="color: #1a2a6c;"></i>
+            </div>
+            <div class="header-text">
+                <h2 class="fw-bold mb-0">PENDAFTARAN PESERTA DIDIK BARU</h2>
+                <h4 class="mb-0">Tahun Pelajaran <span id="web_tahun_pelajaran">2026/2027</span></h4>
+                <p class="mb-0 mt-2 opacity-75 fw-bold" id="web_nama_sekolah"><i class="fa-solid fa-school"></i> SDN BABELAN KOTA 03</p>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white border-bottom">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="fw-bold"><i class="fa-solid fa-building-columns"></i> NAMA SEKOLAH TUJUAN</label>
+                    <input type="text" id="nama_sekolah" class="form-control border-primary" value="SDN BABELAN KOTA 03" oninput="updateNamaSekolah()">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="fw-bold"><i class="fa-solid fa-calendar-days"></i> TAHUN PELAJARAN (EDITABLE)</label>
+                    <input type="text" id="input_tahun_pelajaran" class="form-control border-primary" value="2026/2027" oninput="document.getElementById('p_tahun_pelajaran').innerText = this.value; document.getElementById('web_tahun_pelajaran').innerText = this.value;">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="fw-bold"><i class="fa-solid fa-magnifying-glass"></i>🔍 VALIDASI USIA (Per 1 Juli)</label>
+                    <div class="d-flex flex-wrap gap-2 align-items-center border p-2 rounded bg-light border-primary" style="min-height: 48px;">
+                        <input type="date" id="input_cek_tgl" class="form-control mb-0 flex-grow-1" style="min-width: 140px; border:none; box-shadow:none;" onchange="sinkronUsia()">
+                        <div class="text-center flex-grow-1">
+                            <span id="hasil_hitung" class="fw-bold text-primary d-block" style="font-size: 0.85rem; white-space: nowrap;">0 Thn, 0 Bln, 0 Hr</span> 
+                            <span id="ket_status" class="badge bg-secondary p-1 no-print w-100 mt-1" style="font-size: 0.75rem;">Masukkan Tanggal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="m-4 alert alert-info shadow-sm" style="border-left: 5px solid #0dcaf0;">
+            <h6 class="fw-bold mb-2"><i class="fa-solid fa-circle-info"></i> PANDUAN PENGISIAN FORMULIR:</h6>
+            <ol class="mb-0 small" style="padding-left: 15px;">
+                <li>Siapkan dokumen penting: <strong>Kartu Keluarga (KK), Akta Kelahiran, dan KTP Orang Tua</strong>.</li>
+                <li>Lakukan <strong>Validasi Usia</strong> terlebih dahulu dengan memasukkan Tanggal Lahir anak pada kolom di atas form ini.</li>
+                <li>Isi NIK dan No. KK dengan teliti (harus berjumlah 16 digit angka).</li>
+                <li><strong>Jika Baru Masuk Jenjang PAUD atau TK, Maka Kolom NISN Di Kosongkan.</strong></li>
+ <li><strong>Jika Berasal dari Jenjang RA/PAUD/TK WAJIB Mengisi NISN.</strong></li>
+                <li>Isi seluruh form menggunakan data yang valid. Jangan lupa mengisi <strong>Kota dan Tanggal Penandatanganan</strong> pada bagian paling bawah.</li>
+                <li>Setelah selesai, klik tombol <strong>CETAK / SAVE PDF FORMULIR</strong>, dan cetak pada kertas berukuran <strong>F4 (Folio)</strong>.</li>
+            </ol>
+        </div>
+
+        <form id="formPendaftaran" class="locked-form px-4 pb-4" onsubmit="event.preventDefault();">
+            <input type="hidden" name="ket_usia" id="hidden_ket_usia">
+
+            <div class="section-container sec-anak">
+                <div class="section-title"><i class="fa-solid fa-child"></i> I. IDENTITAS PESERTA DIDIK</div>
+                <div class="row">
+                    <div class="col-md-12"><label><i class="fa-solid fa-user"></i> Nama Lengkap</label><input type="text" name="nama" class="form-control" required placeholder="Sesuai Akte" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-venus-mars"></i> Jenis Kelamin</label>
+                        <select name="jk" class="form-select">
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-id-card"></i> NISN</label><input type="number" name="nisn" class="form-control" placeholder="Jika ada (10 Digit)" oninput="validasiNISN(this)"></div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-map-location-dot"></i> Tempat Lahir</label><input type="text" name="tempat_lahir" class="form-control" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-calendar-days"></i> Tanggal Lahir</label><input type="date" name="tgl_lahir" id="tgl_asli" class="form-control" readonly></div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-address-card"></i> NIK Siswa (16 Digit)</label><input type="number" name="nik" class="form-control" placeholder="Harus 16 Digit Angka" oninput="validasi16Digit(this)"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-users-rectangle"></i> No. Kartu Keluarga</label><input type="number" name="no_kk" class="form-control" placeholder="Harus 16 Digit Angka" oninput="validasi16Digit(this)"></div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-file-contract"></i> No. Akte Kelahiran</label><input type="text" name="no_akte" class="form-control"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-mosque"></i> Agama</label>
+                        <select name="agama" class="form-select">
+                            <option value="Islam">Islam</option>
+                            <option value="Kristen">Kristen</option>
+                            <option value="Katolik">Katolik</option>
+                            <option value="Hindu">Hindu</option>
+                            <option value="Buddha">Buddha</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-credit-card"></i> Penerima KIP/PKH?</label>
+                        <select name="pkh" class="form-select">
+                            <option value="Tidak">Tidak</option>
+                            <option value="Ya">Ya</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12"><label><i class="fa-solid fa-house"></i> Alamat Rumah Lengkap</label><input type="text" name="alamat" class="form-control" placeholder="Jalan, RT/RW, Dusun" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-map"></i> Desa/Kelurahan</label><input type="text" name="desa" class="form-control" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-map-location"></i> Kecamatan</label><input type="text" name="kecamatan" class="form-control" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-city"></i> Kabupaten</label><input type="text" name="kabupaten" class="form-control" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-map-pin"></i> Provinsi</label><input type="text" name="provinsi" class="form-control" oninput="this.value = this.value.toUpperCase()"></div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-envelope"></i> Kode Pos</label><input type="number" name="kode_pos" class="form-control"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-sitemap"></i> Anak Ke-</label><input type="number" name="anak_ke" class="form-control"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-house-user"></i> Jenis Tinggal</label>
+                        <select name="tinggal" class="form-select">
+                            <option value="Orang Tua">Orang Tua</option>
+                            <option value="Wali">Wali</option>
+                            <option value="Asrama">Asrama</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6"><label><i class="fa-solid fa-bus"></i> Alat Transportasi</label>
+                        <select name="transportasi" class="form-select">
+                            <option value="Jalan Kaki">Jalan Kaki</option>
+                            <option value="Sepeda">Sepeda</option>
+                            <option value="Motor">Motor</option>
+                            <option value="Mobil Pribadi">Mobil Pribadi</option>
+                            <option value="Antar Jemput / Ojek">Antar Jemput / Ojek</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6"><label><i class="fa-brands fa-whatsapp"></i> No HP Orang Tua (WA Aktif)</label><input type="text" name="hp" class="form-control" placeholder="08xxxxxx"></div>
+                </div>
+            </div>
+
+            <div class="section-container sec-ortu">
+                <div class="section-title"><i class="fa-solid fa-users"></i> II. IDENTITAS ORANG TUA</div>
+                <div class="row">
+                    <div class="col-md-6 border-end">
+                        <label class="text-primary fw-bold"><i class="fa-solid fa-person"></i> DATA AYAH</label>
+                        <input type="text" name="ayah_nama" id="input_ayah_nama" class="form-control" placeholder="Nama Lengkap Ayah" oninput="this.value = this.value.toUpperCase()">
+                        <input type="number" name="ayah_nik" class="form-control" placeholder="NIK Ayah (16 Digit)" oninput="validasi16Digit(this)">
+                        <input type="number" name="ayah_tahun" class="form-control" placeholder="Tahun Lahir Ayah (4 Digit)" oninput="validasiTahun(this)">
+                        
+                        <label>Pendidikan Ayah</label>
+                        <select name="ayah_pendidikan" class="form-select">
+                            <option value="">-- Pilih Pendidikan --</option>
+                            <option value="SD / Sederajat">SD / Sederajat</option>
+                            <option value="SMP / Sederajat">SMP / Sederajat</option>
+                            <option value="SMA / Sederajat">SMA / Sederajat</option>
+                            <option value="D1 / D2 / D3">D1 / D2 / D3</option>
+                            <option value="D4 / S1">D4 / S1</option>
+                            <option value="S2 / S3">S2 / S3</option>
+                            <option value="Tidak Sekolah">Tidak Sekolah</option>
+                        </select>
+
+                        <label>Pekerjaan Ayah</label>
+                        <select name="ayah_kerja" class="form-select">
+                            <option value="">-- Pilih Pekerjaan --</option>
+                            <option value="Tidak Bekerja">Tidak Bekerja</option>
+                            <option value="Guru dan Dosen">Guru dan Dosen</option>
+                            <option value="Nelayan">Nelayan</option>
+                            <option value="Petani">Petani</option>
+                            <option value="Peternak">Peternak</option>
+                            <option value="PNS/TNI/Polri">PNS/TNI/Polri</option>
+                            <option value="Karyawan Swasta">Karyawan Swasta</option>
+                            <option value="Pedagang">Pedagang</option>
+                            <option value="Wiraswasta">Wiraswasta</option>
+                            <option value="Buruh">Buruh</option>
+                            <option value="Pensiunan">Pensiunan</option>
+                            <option value="TKI">TKI</option>
+                            <option value="Sudah Meninggal">Sudah Meninggal</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        
+                        <label>Penghasilan Bulanan Ayah</label>
+                        <select name="ayah_gaji" class="form-select">
+                            <option value="">-- Pilih Penghasilan --</option>
+                            <option value="Tidak Berpenghasilan">Tidak Berpenghasilan</option>
+                            <option value="Kurang dari Rp. 500.000">Kurang dari Rp. 500.000</option>
+                            <option value="Rp. 500.000 - Rp. 999.999">Rp. 500.000 - Rp. 999.999</option>
+                            <option value="Rp. 1.000.000 - Rp. 1.999.999">Rp. 1.000.000 - Rp. 1.999.999</option>
+                            <option value="Rp. 2.000.000 - Rp. 4.999.999">Rp. 2.000.000 - Rp. 4.999.999</option>
+                            <option value="Rp. 5.000.000 - Rp. 20.000.000">Rp. 5.000.000 - Rp. 20.000.000</option>
+                            <option value="Lebih dari Rp. 20.000.000">Lebih dari Rp. 20.000.000</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="text-danger fw-bold"><i class="fa-solid fa-person-breastfeeding"></i> DATA IBU</label>
+                        <input type="text" name="ibu_nama" class="form-control" placeholder="Nama Lengkap Ibu" oninput="this.value = this.value.toUpperCase()">
+                        <input type="number" name="ibu_nik" class="form-control" placeholder="NIK Ibu (16 Digit)" oninput="validasi16Digit(this)">
+                        <input type="number" name="ibu_tahun" class="form-control" placeholder="Tahun Lahir Ibu (4 Digit)" oninput="validasiTahun(this)">
+                        
+                        <label>Pendidikan Ibu</label>
+                        <select name="ibu_pendidikan" class="form-select">
+                            <option value="">-- Pilih Pendidikan --</option>
+                            <option value="SD / Sederajat">SD / Sederajat</option>
+                            <option value="SMP / Sederajat">SMP / Sederajat</option>
+                            <option value="SMA / Sederajat">SMA / Sederajat</option>
+                            <option value="D1 / D2 / D3">D1 / D2 / D3</option>
+                            <option value="D4 / S1">D4 / S1</option>
+                            <option value="S2 / S3">S2 / S3</option>
+                            <option value="Tidak Sekolah">Tidak Sekolah</option>
+                        </select>
+
+                        <label>Pekerjaan Ibu</label>
+                        <select name="ibu_kerja" class="form-select">
+                            <option value="">-- Pilih Pekerjaan --</option>
+                            <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+                            <option value="Guru dan Dosen">Guru dan Dosen</option>
+                            <option value="PNS/TNI/Polri">PNS/TNI/Polri</option>
+                            <option value="Karyawan Swasta">Karyawan Swasta</option>
+                            <option value="Pedagang">Pedagang</option>
+                            <option value="Wiraswasta">Wiraswasta</option>
+                            <option value="Buruh">Buruh</option>
+                            <option value="Sudah Meninggal">Sudah Meninggal</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        
+                        <label>Penghasilan Bulanan Ibu</label>
+                        <select name="ibu_gaji" class="form-select">
+                            <option value="">-- Pilih Penghasilan --</option>
+                            <option value="Tidak Berpenghasilan">Tidak Berpenghasilan</option>
+                            <option value="Kurang dari Rp. 500.000">Kurang dari Rp. 500.000</option>
+                            <option value="Rp. 500.000 - Rp. 999.999">Rp. 500.000 - Rp. 999.999</option>
+                            <option value="Rp. 1.000.000 - Rp. 1.999.999">Rp. 1.000.000 - Rp. 1.999.999</option>
+                            <option value="Rp. 2.000.000 - Rp. 4.999.999">Rp. 2.000.000 - Rp. 4.999.999</option>
+                            <option value="Rp. 5.000.000 - Rp. 20.000.000">Rp. 5.000.000 - Rp. 20.000.000</option>
+                            <option value="Lebih dari Rp. 20.000.000">Lebih dari Rp. 20.000.000</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-container sec-periodik">
+                <div class="section-title"><i class="fa-solid fa-file-medical"></i> III. DATA PERIODIK PESERTA DIDIK</div>
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label><i class="fa-solid fa-school-flag"></i> Masuk Di Kelas</label>
+                        <select name="kelas" id="select_kelas" class="form-select">
+                            <option value="">- Pilih Usia Dulu -</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-weight-scale"></i> Berat Badan (kg)</label><input type="number" name="bb" class="form-control" placeholder="0"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-ruler-vertical"></i> Tinggi Badan (cm)</label><input type="number" name="tb" class="form-control" placeholder="0"></div>
+                    <div class="col-md-3"><label><i class="fa-solid fa-tape"></i> Lingkar Kepala (cm)</label><input type="number" name="lingkar_kepala" class="form-control" placeholder="0"></div>
+                    
+                    <div class="col-md-4"><label><i class="fa-solid fa-people-roof"></i> Jumlah Saudara Kandung</label><input type="number" name="saudara" class="form-control" placeholder="0"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-icons"></i> Hobi</label><input type="text" name="hobi" class="form-control" placeholder="Hobi Anak" oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="col-md-4"><label><i class="fa-solid fa-user-astronaut"></i> Cita-Cita</label><input type="text" name="cita_cita" class="form-control" placeholder="Cita-cita Anak" oninput="this.value = this.value.toUpperCase()"></div>
+                    
+                    <div class="col-md-6">
+                        <label><i class="fa-solid fa-route"></i> Jarak ke Sekolah</label>
+                        <select name="jarak" class="form-select" required>
+                            <option value="">-- Pilih Jarak --</option>
+                            <option value="Kurang dari 1 km">Kurang dari 1 km</option>
+                            <option value="1 – 5 km">1 – 5 km</option>
+                            <option value="5 – 10 km">5 – 10 km</option>
+                            <option value="10 – 15 km">10 – 15 km</option>
+                            <option value="Lebih dari 15 km">Lebih dari 15 km</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label><i class="fa-solid fa-clock"></i> Waktu Tempuh</label>
+                        <select name="waktu_tempuh" class="form-select">
+                            <option value="">-- Pilih Waktu --</option>
+                            <option value="1 - 10 Menit">1 - 10 Menit</option>
+                            <option value="10 - 20 Menit">10 - 20 Menit</option>
+                            <option value="20 - 30 Menit">20 - 30 Menit</option>
+                            <option value="30 - 60 Menit">30 - 60 Menit</option>
+                            <option value="Lebih dari 1 Jam">Lebih dari 1 Jam</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-container sec-titimangsa">
+                <div class="section-title"><i class="fa-solid fa-pen-nib"></i> IV. TITIMANGSA (PENGESAHAN)</div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label><i class="fa-solid fa-city"></i> Kota/Tempat Tanda Tangan</label>
+                        <input type="text" name="kota_ttd" id="input_kota_ttd" class="form-control" placeholder="Contoh: Babelan" value="Babelan" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <div class="col-md-6">
+                        <label><i class="fa-solid fa-calendar-check"></i> Tanggal Tanda Tangan</label>
+                        <input type="date" name="tgl_ttd" id="input_tgl_ttd" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btn_simpan" class="btn-simpan shadow" onclick="prosesCetak()"><i class="fa-solid fa-print"></i> CETAK / SAVE PDF FORMULIR (F4)</button>
+        </form>
+    </div>
+
+    <div class="app-footer no-print">
+        <p>&copy; 2026 <strong id="footer_nama_sekolah">SDN BABELAN KOTA 03</strong>. All Rights Reserved.<br>
+        <small>Developed by Galuh Barden</small></p>
+    </div>
+</div>
+
+<div id="print-area">
+    
+    <div class="page-container">
+        <img src="https://rohimansupriyadi82-cmd.github.io/Formulir_SPMB/tutwuri.png" class="watermark-logo" alt="Watermark">
+        
+        <div class="header-dapodik-wrapper">
+            <div class="logo-dapodik-container">
+                <div class="ruang-logo">
+                    <img src="dapodik.png" alt="Logo Dapodik" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+                <div class="title-wrapper">
+                    <h1 class="dapodik-blue">dapodik</h1>
+                    <h2 class="dapodik-orange">Data Pokok Pendidikan</h2>
+                </div>
+            </div>
+            
+            <div class="ribbon-sekolah" id="print_ribbon_sekolah">
+                S D N   M U A R A   B A K T I   0 2
+            </div><br>
+            
+            <div class="title-hitam">
+                FORMULIR PESERTA DIDIK BARU / PINDAHAN
+            </div>
+            <div class="print-tahun-pelajaran">
+                TAHUN PELAJARAN <span id="p_tahun_pelajaran">2026/2027</span>
+            </div>
+        </div>
+
+        <div class="row-tgl-nis">
+            <div>Tanggal Pendaftaran : &nbsp;&nbsp;<span id="p_tgl_daftar" style="border: 1px solid #999; padding: 2px 10px;"></span></div>
+            <div style="text-align: right;">
+                <span class="nis-box">USIA : <span id="p_usia_validasi" style="text-decoration: underline;">________________________</span></span>
+                <span class="sub-nis">(Hasil Validasi Per 1 Juli)</span>
+            </div>
+        </div>
+
+        <div class="section-print-purple">Data Pribadi Peserta Didik</div>
+        <table class="table-print">
+            <tr><td class="t-lbl">Nama Lengkap</td><td class="t-cln">:</td><td class="t-val" id="p_nama"></td></tr>
+            <tr><td class="t-lbl">Jenis Kelamin</td><td class="t-cln">:</td><td class="t-val" id="p_jk"></td></tr>
+            <tr><td class="t-lbl">Nomor Induk Siswa Nasional (NISN)</td><td class="t-cln">:</td><td class="t-val" id="p_nisn"></td></tr>
+            <tr><td class="t-lbl">Nomor Induk Kependudukan (NIK)</td><td class="t-cln">:</td><td class="t-val" id="p_nik"></td></tr>
+            <tr><td class="t-lbl">Nomor Kartu Keluarga (KK)</td><td class="t-cln">:</td><td class="t-val" id="p_kk"></td></tr>
+            <tr><td class="t-lbl">Tempat / Tanggal Lahir</td><td class="t-cln">:</td><td class="t-val" id="p_ttl"></td></tr>
+            <tr><td class="t-lbl">No. Registrasi Akte Kelahiran</td><td class="t-cln">:</td><td class="t-val" id="p_akte"></td></tr>
+            <tr><td class="t-lbl">Agama</td><td class="t-cln">:</td><td class="t-val" id="p_agama"></td></tr>
+            <tr><td class="t-lbl">Alamat Rumah</td><td class="t-cln">:</td><td class="t-val" id="p_alamat"></td></tr>
+            <tr><td class="t-lbl">Desa / Kelurahan</td><td class="t-cln">:</td><td class="t-val" id="p_desa"></td></tr>
+            <tr><td class="t-lbl">Kecamatan</td><td class="t-cln">:</td><td class="t-val" id="p_kecamatan"></td></tr>
+            <tr><td class="t-lbl">Kabupaten</td><td class="t-cln">:</td><td class="t-val" id="p_kabupaten"></td></tr>
+            <tr><td class="t-lbl">Provinsi</td><td class="t-cln">:</td><td class="t-val" id="p_provinsi"></td></tr>
+            <tr><td class="t-lbl">Kode Pos</td><td class="t-cln">:</td><td class="t-val" id="p_kodepos"></td></tr>
+            <tr><td class="t-lbl">Tempat Tinggal/Tinggal Dengan Siapa</td><td class="t-cln">:</td><td class="t-val" id="p_tinggal"></td></tr>
+            <tr><td class="t-lbl">Moda Transportasi</td><td class="t-cln">:</td><td class="t-val" id="p_transport"></td></tr>
+            <tr><td class="t-lbl">Anak Ke Berapa</td><td class="t-cln">:</td><td class="t-val" id="p_anak_ke"></td></tr>
+            <tr><td class="t-lbl">Apakah Punya KIP/PKH</td><td class="t-cln">:</td><td class="t-val" id="p_pkh"></td></tr>
+            <tr><td class="t-lbl">No Handphone</td><td class="t-cln">:</td><td class="t-val" id="p_hp"></td></tr>
+        </table>
+
+        <div class="section-print-purple">Data Ayah Kandung</div>
+        <table class="table-print">
+            <tr><td class="t-lbl">Nama Ayah</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_nama"></td></tr>
+            <tr><td class="t-lbl">Nomor Induk Kependudukan / NIK</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_nik"></td></tr>
+            <tr><td class="t-lbl">Tahun Lahir</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_tahun"></td></tr>
+            <tr><td class="t-lbl">Pendidikan</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_pend"></td></tr>
+            <tr><td class="t-lbl">Pekerjaan Ayah</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_kerja"></td></tr>
+            <tr><td class="t-lbl">Penghasilan Ayah</td><td class="t-cln">:</td><td class="t-val" id="p_ayah_gaji"></td></tr>
+        </table>
+
+        <div class="section-print-purple">Data Ibu Kandung</div>
+        <table class="table-print">
+            <tr><td class="t-lbl">Nama Ibu</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_nama"></td></tr>
+            <tr><td class="t-lbl">Nomor Induk Kependudukan / NIK</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_nik"></td></tr>
+            <tr><td class="t-lbl">Tahun Lahir</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_tahun"></td></tr>
+            <tr><td class="t-lbl">Pendidikan</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_pend"></td></tr>
+            <tr><td class="t-lbl">Pekerjaan Ibu</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_kerja"></td></tr>
+            <tr><td class="t-lbl">Penghasilan Ibu</td><td class="t-cln">:</td><td class="t-val" id="p_ibu_gaji"></td></tr>
+        </table>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="page-container">
+        <img src="https://rohimansupriyadi82-cmd.github.io/Formulir_SPMB/tutwuri.png" class="watermark-logo" alt="Watermark">
+        
+        <div class="section-print-green" style="margin-top: 10px;">Data Wali ( Di Isi Jika Tinggal Dengan Wali )</div>
+        <table class="table-print">
+            <tr><td class="t-lbl">Nama Wali</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+            <tr><td class="t-lbl">Nomor Induk Kependudukan / NIK</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+            <tr><td class="t-lbl">Tahun Lahir</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+            <tr><td class="t-lbl">Pendidikan</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+            <tr><td class="t-lbl">Pekerjaan Wali</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+            <tr><td class="t-lbl">Penghasilan Wali</td><td class="t-cln">:</td><td class="t-val">&nbsp;</td></tr>
+        </table>
+
+        <div class="section-print-blue">Data Periodik Peserta Didik</div>
+        <table class="table-print" style="width: 85%;">
+            <tr>
+                <td class="t-lbl" style="width: 45%;">Tinggi Badan ( Cm )</td><td class="t-cln">:</td>
+                <td><span id="p_tb" style="border-bottom: 1px dotted black; display:inline-block; width: 100px; font-weight:bold;"></span> Cm</td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Berat Badan ( Kg )</td><td class="t-cln">:</td>
+                <td><span id="p_bb" style="border-bottom: 1px dotted black; display:inline-block; width: 100px; font-weight:bold;"></span> Kg</td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Lingkar Kepala</td><td class="t-cln">:</td>
+                <td><span id="p_lingkar_kepala" style="border-bottom: 1px dotted black; display:inline-block; width: 100px; font-weight:bold;"></span> Cm</td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Jarak Rumah Ke Sekolah</td><td class="t-cln">:</td>
+                <td><span id="p_jarak" style="border-bottom: 1px dotted black; font-weight:bold; display:inline-block; width: 250px;"></span></td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Waktu Tempuh Ke Sekolah</td><td class="t-cln">:</td>
+                <td><span id="p_waktu" style="border-bottom: 1px dotted black; display:inline-block; width: 250px; font-weight:bold;"></span></td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Jumlah Saudara Kandung</td><td class="t-cln">:</td>
+                <td><span id="p_saudara" style="border-bottom: 1px dotted black; display:inline-block; width: 100px; font-weight:bold;"></span> Orang</td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Hobi</td><td class="t-cln">:</td>
+                <td><span id="p_hobi" style="border-bottom: 1px dotted black; display:inline-block; width: 250px; font-weight:bold;"></span></td>
+            </tr>
+            <tr>
+                <td class="t-lbl">Cita-cita</td><td class="t-cln">:</td>
+                <td><span id="p_cita_cita" style="border-bottom: 1px dotted black; display:inline-block; width: 250px; font-weight:bold;"></span></td>
+            </tr>
+        </table>
+
+        <div class="signature-wrapper">
+            <div class="signature-box">
+                <span id="p_kota_ttd_print">Babelan</span>, <span id="p_tgl_ttd_print">......................................... 2026</span><br>
+                Wali Murid
+                <br><br><br><br><br>
+                <span class="garis-bawah-tebal" id="p_ttd_nama"></span>
+            </div>
+        </div>
+
+        <div class="catatan-box-title">Catatan Kepada Peserta Didik Baru :</div>
+        <ol class="catatan-list">
+            <li>Lampirkan Fotocopy KK & Fotocopy KTP Orang Tua</li>
+            <li>Lampirkan Fotocopy Akte Kelahiran ( Jika ada )</li>
+            <li>Tulislah Formulir <strong><em>PPDB</em></strong> ini dengan <strong><em>TULISAN</em></strong> yang Jelas<br>
+                ( untuk memudahkan Pengenterian di <strong><em>Aplikasi DAPODIK</em></strong> )</li>
+            <li>Jika berasal dari <strong><em>TK / KB</em></strong> agar melampirkan Fotocopy <strong><em>IJAZAH</em></strong></li>
+            <li>Susunlah Berkas-berkas tersebut lalu di streples dijadikan satu kemudian masukan kedalam Map Pendaftaran</li>
+        </ol>
+
+        <div class="terima-kasih-img">
+            Terima Kasih
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fitur Update Nama Sekolah di Header & Ribbon Print
+    function updateNamaSekolah() {
+        let nama = document.getElementById("nama_sekolah").value.toUpperCase();
+        
+        document.title = "Aplikasi SPMB 2026 - " + nama;
+        document.getElementById("web_nama_sekolah").innerHTML = '<i class="fa-solid fa-school"></i> ' + nama;
+        document.getElementById("footer_nama_sekolah").innerText = nama;
+        document.getElementById("print_ribbon_sekolah").innerText = nama.split('').join(' ');
+    }
+
+    // Fitur Validasi Input Otomatis 16 Digit (Untuk NIK dan No KK)
+    function validasi16Digit(el) {
+        el.value = el.value.replace(/[^0-9]/g, '');
+        if (el.value.length > 16) {
+            el.value = el.value.slice(0, 16);
+        }
+        if (el.value !== "" && el.value.length !== 16) {
+            el.style.border = "2px solid #dc3545"; // Merah
+        } else {
+            el.style.border = ""; // Normal
+        }
+    }
+
+    // Fitur Pembatas Input Sederhana
+    function limitInput(el) { 
+        if (el.value.length > el.maxLength) el.value = el.value.slice(0, el.maxLength); 
+    }
+
+    // Validasi NISN (Maksimal 10 Digit)
+    function validasiNISN(el) {
+        el.value = el.value.replace(/[^0-9]/g, '');
+        if (el.value.length > 10) {
+            el.value = el.value.slice(0, 10);
+        }
+        if (el.value !== "" && el.value.length !== 10) {
+            el.style.border = "2px solid #dc3545"; 
+        } else {
+            el.style.border = ""; 
+        }
+    }
+
+    // Validasi Real-time 4 Digit Angka pada Tahun Lahir Ortua
+    function validasiTahun(el) {
+        el.value = el.value.replace(/[^0-9]/g, '');
+        
+        if (el.value.length > 4) {
+            el.value = el.value.slice(0, 4);
+        }
+        
+        if (el.value.startsWith('0')) {
+            el.value = el.value.replace(/^0+/, '');
+        }
+        
+        if (el.value !== "" && el.value.length < 4) {
+            el.style.border = "2px solid #dc3545"; 
+        } else {
+            el.style.border = ""; 
+        }
+    }
+
+    function sinkronUsia() {
+        let tgl = document.getElementById("input_cek_tgl").value;
+        if(!tgl) return;
+        
+        let birthDate = new Date(tgl);
+        let targetDate = new Date("2026-07-01");
+
+        let years = targetDate.getFullYear() - birthDate.getFullYear();
+        let months = targetDate.getMonth() - birthDate.getMonth();
+        let days = targetDate.getDate() - birthDate.getDate();
+
+        if (days < 0) {
+            months--;
+            let lastMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 0);
+            days += lastMonth.getDate();
+        }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        
+        let textUsia = years + " Thn, " + months + " Bln, " + days + " Hr";
+        document.getElementById("hasil_hitung").innerText = textUsia;
+        document.getElementById("tgl_asli").value = tgl;
+        
+        let k = "";
+        let formEl = document.getElementById("formPendaftaran");
+        let statusBadge = document.getElementById("ket_status");
+        let selectKelas = document.getElementById("select_kelas");
+
+        // Logika Usia & Kelas (TK A, TK B, Kelas 1)
+        if (years >= 6) {
+            k = years >= 7 ? "USIA PRIORITAS SD" : "MEMENUHI SYARAT SD";
+            statusBadge.className = "badge p-2 w-100 mt-1 " + (years >= 7 ? "bg-success" : "bg-primary");
+            formEl.classList.remove("locked-form");
+            selectKelas.innerHTML = '<option value="Kelas 1" selected>Kelas 1</option><option value="TK A">TK A</option><option value="TK B">TK B</option>';
+        } else if (years == 5) {
+            k = "MASUK KRITERIA TK B";
+            statusBadge.className = "badge p-2 w-100 mt-1 bg-info text-dark";
+            formEl.classList.remove("locked-form");
+            selectKelas.innerHTML = '<option value="TK A">TK A</option><option value="TK B" selected>TK B</option><option value="Kelas 1">Kelas 1</option>';
+        } else if (years == 4) {
+            k = "MASUK KRITERIA TK A";
+            statusBadge.className = "badge p-2 w-100 mt-1 bg-info text-dark";
+            formEl.classList.remove("locked-form");
+            selectKelas.innerHTML = '<option value="TK A" selected>TK A</option><option value="TK B">TK B</option><option value="Kelas 1">Kelas 1</option>';
+        } else {
+            k = "BELUM CUKUP USIA TK/SD";
+            statusBadge.className = "badge p-2 w-100 mt-1 bg-danger";
+            formEl.classList.add("locked-form");
+            selectKelas.innerHTML = '<option value="">Belum Cukup Usia</option>';
+            alert("Maaf, usia anak belum mencukupi untuk jenjang TK maupun SD (Minimal usia 4 tahun per 1 Juli 2026).");
+        }
+        
+        statusBadge.innerText = k;
+        document.getElementById("hidden_ket_usia").value = k + " (" + textUsia + ")";
+    }
+
+    function mappingDataKePrint() {
+        const form = document.getElementById('formPendaftaran');
+        
+        const tglSekarang = new Date().toLocaleDateString('id-ID', {day: '2-digit', month: '2-digit', year: 'numeric'});
+        document.getElementById('p_tgl_daftar').innerText = tglSekarang.replace(/\//g, " - ");
+
+        document.getElementById('p_tahun_pelajaran').innerText = document.getElementById('input_tahun_pelajaran').value;
+        
+        let usiaCetak = document.getElementById('hasil_hitung').innerText;
+        document.getElementById('p_usia_validasi').innerText = (usiaCetak !== "0 Thn, 0 Bln, 0 Hr") ? usiaCetak : "________________________";
+
+        // Data Anak
+        document.getElementById('p_nama').innerText = form.nama.value;
+        document.getElementById('p_jk').innerText = form.jk.value || "..................";
+        document.getElementById('p_nisn').innerText = form.nisn.value;
+        document.getElementById('p_nik').innerText = form.nik.value;
+        document.getElementById('p_kk').innerText = form.no_kk.value;
+        
+        let tempat = form.tempat_lahir.value.toUpperCase();
+        let formatTglLahir = "";
+        if(form.tgl_lahir.value) {
+            let d = new Date(form.tgl_lahir.value);
+            let day = String(d.getDate()).padStart(2, '0');
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let year = d.getFullYear();
+            formatTglLahir = `${day}/${month}/${year}`;
+        }
+        let separator = (tempat && formatTglLahir) ? " / " : "";
+        document.getElementById('p_ttl').innerText = tempat + separator + formatTglLahir;
+        
+        document.getElementById('p_akte').innerText = form.no_akte.value;
+        document.getElementById('p_agama').innerText = form.agama.value || "..................";
+        document.getElementById('p_alamat').innerText = form.alamat.value;
+        document.getElementById('p_desa').innerText = form.desa.value;
+        document.getElementById('p_kecamatan').innerText = form.kecamatan.value;
+        document.getElementById('p_kabupaten').innerText = form.kabupaten.value;
+        document.getElementById('p_provinsi').innerText = form.provinsi.value;
+        document.getElementById('p_kodepos').innerText = form.kode_pos.value;
+        document.getElementById('p_tinggal').innerText = form.tinggal.value || "..................";
+        document.getElementById('p_transport').innerText = form.transportasi.value || "..................";
+        document.getElementById('p_anak_ke').innerText = form.anak_ke.value;
+        document.getElementById('p_pkh').innerText = form.pkh.value || "..................";
+        document.getElementById('p_hp').innerText = form.hp.value;
+
+        // Data Ayah
+        document.getElementById('p_ayah_nama').innerText = form.ayah_nama.value;
+        document.getElementById('p_ayah_nik').innerText = form.ayah_nik.value;
+        document.getElementById('p_ayah_tahun').innerText = form.ayah_tahun.value;
+        document.getElementById('p_ayah_pend').innerText = form.ayah_pendidikan.value || "..................";
+        document.getElementById('p_ayah_kerja').innerText = form.ayah_kerja.value || "..................";
+        document.getElementById('p_ayah_gaji').innerText = form.ayah_gaji.value || "..................";
+
+        // Data Ibu
+        document.getElementById('p_ibu_nama').innerText = form.ibu_nama.value;
+        document.getElementById('p_ibu_nik').innerText = form.ibu_nik.value;
+        document.getElementById('p_ibu_tahun').innerText = form.ibu_tahun.value;
+        document.getElementById('p_ibu_pend').innerText = form.ibu_pendidikan.value || "..................";
+        document.getElementById('p_ibu_kerja').innerText = form.ibu_kerja.value || "..................";
+        document.getElementById('p_ibu_gaji').innerText = form.ibu_gaji.value || "..................";
+
+        // Data Periodik
+        document.getElementById('p_tb').innerText = form.tb.value || ".....";
+        document.getElementById('p_bb').innerText = form.bb.value || ".....";
+        document.getElementById('p_lingkar_kepala').innerText = form.lingkar_kepala.value || ".....";
+        document.getElementById('p_jarak').innerText = form.jarak.value || "..................";
+        document.getElementById('p_waktu').innerText = form.waktu_tempuh.value || "..................";
+        document.getElementById('p_saudara').innerText = form.saudara.value || ".....";
+        document.getElementById('p_hobi').innerText = form.hobi.value || ".....";
+        document.getElementById('p_cita_cita').innerText = form.cita_cita.value || ".....";
+
+        // Titimangsa & Tanda Tangan (RATA TENGAH & TANGGAL DINAMIS)
+        let kotaTtd = document.getElementById('input_kota_ttd').value || "BABELAN";
+        let tglTtdInput = document.getElementById('input_tgl_ttd').value;
+        let tglTtdFormat = "......................................... 2026";
+        if(tglTtdInput) {
+            let d = new Date(tglTtdInput);
+            let monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            tglTtdFormat = d.getDate() + " " + monthNames[d.getMonth()] + " " + d.getFullYear();
+        }
+        
+        kotaTtd = kotaTtd.charAt(0).toUpperCase() + kotaTtd.slice(1).toLowerCase();
+        
+        document.getElementById('p_kota_ttd_print').innerText = kotaTtd;
+        document.getElementById('p_tgl_ttd_print').innerText = tglTtdFormat;
+
+        let namaOrtu = form.ayah_nama.value || form.ibu_nama.value;
+        document.getElementById('p_ttd_nama').innerText = namaOrtu ? namaOrtu.toUpperCase() : "........................................";
+    }
+
+    // FUNGSI PROSES CETAK TANPA MENGIRIM KE SPREADSHEET
+    function prosesCetak() {
+        const form = document.getElementById('formPendaftaran');
+        const btn = document.getElementById('btn_simpan');
+        
+        // Pengecekan Wajib Nama
+        if(!form.nama.value) { 
+            alert("⚠️ Nama Lengkap wajib diisi!"); 
+            form.nama.focus();
+            return; 
+        }
+
+        // Pengecekan Wajib 16 Digit NIK Siswa
+        if(form.nik.value.length !== 16) {
+            alert("⚠️ NIK Siswa tidak valid! Harus berjumlah tepat 16 digit angka. Silakan lengkapi terlebih dahulu.");
+            form.nik.focus();
+            return;
+        }
+
+        // Pengecekan Wajib 16 Digit No KK
+        if(form.no_kk.value.length !== 16) {
+            alert("⚠️ No. Kartu Keluarga (KK) tidak valid! Harus berjumlah tepat 16 digit angka.");
+            form.no_kk.focus();
+            return;
+        }
+
+        // Pengecekan Keamanan: NIK dan KK Tidak Boleh Sama
+        if(form.nik.value === form.no_kk.value) {
+            alert("⚠️ Kesalahan Data: NIK Siswa dan No. Kartu Keluarga (KK) tidak boleh sama! Silakan periksa kembali ketikan Anda.");
+            form.nik.focus();
+            return;
+        }
+
+        // Pengecekan NISN (Opsional, tapi jika diisi wajib 10 digit)
+        if(form.nisn.value !== "" && form.nisn.value.length !== 10) {
+            alert("⚠️ Jika NISN diisi, maka harus berjumlah tepat 10 digit angka!");
+            form.nisn.focus();
+            return;
+        }
+
+        // Pengecekan Validasi Tahun Lahir Orang Tua
+        if(form.ayah_tahun.value !== "" && form.ayah_tahun.value.length !== 4) {
+            alert("⚠️ Tahun Lahir Ayah tidak valid! Pastikan terisi 4 digit angka (Contoh: 1985).");
+            form.ayah_tahun.focus();
+            return;
+        }
+        if(form.ibu_tahun.value !== "" && form.ibu_tahun.value.length !== 4) {
+            alert("⚠️ Tahun Lahir Ibu tidak valid! Pastikan terisi 4 digit angka (Contoh: 1990).");
+            form.ibu_tahun.focus();
+            return;
+        }
+        
+        // Memasukkan data dari form ke template cetak
+        mappingDataKePrint();
+
+        // Mengubah teks tombol agar lebih relevan (hanya update visual tanpa menghapus data di form)
+        btn.innerHTML = '<i class="fa-solid fa-print"></i> CETAK ULANG FORMULIR (F4)';
+        
+        // Membuka dialog print/save PDF browser
+        window.print(); 
+    }
+    
+    // Inisialisasi awal
+    window.onload = function() {
+        updateNamaSekolah(); 
+    }
+</script>
+</body>
+</html>
